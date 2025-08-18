@@ -1,46 +1,98 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class NPCAI : MonoBehaviour {
-
+public class NPCAI : MonoBehaviour
+{
     public GameObject desinationPoint;
-    NavMeshAgent theAgent;
-    public static bool fleeMode = false;
     public GameObject fleeDest;
     public AudioSource helpMeFX;
-    public bool isFleeing = false;
 
-	void Start () {
+    private NavMeshAgent theAgent;
+    private Animator anim;
+    private bool isFleeing = false;
+    public static bool fleeMode = false;
+    private bool isAlive = true;
+
+    [Header("Ragdoll Settings")]
+    public Rigidbody[] ragdollBodies;
+    public Collider[] ragdollColliders;
+
+    void Start()
+    {
         theAgent = GetComponent<NavMeshAgent>();
-	}
-	
+        anim = GetComponent<Animator>();
+        DisableRagdoll(); // Start with ragdoll off
+    }
 
+    void Update()
+    {
+        if (!isAlive) return;
 
-	void Update () {
-        if (fleeMode == false)
+        if (!fleeMode)
         {
             theAgent.SetDestination(desinationPoint.transform.position);
+            anim.Play("Walking");
         }
         else
         {
             theAgent.SetDestination(fleeDest.transform.position);
-            if (isFleeing == false)
+            if (!isFleeing)
             {
                 isFleeing = true;
                 StartCoroutine(FleeingNPC());
             }
         }
-	}
+    }
 
     IEnumerator FleeingNPC()
     {
         helpMeFX.Play();
+        anim.Play("Running");
+        theAgent.speed = 5f;
         yield return new WaitForSeconds(13);
         fleeMode = false;
         isFleeing = false;
-        this.gameObject.GetComponent<Animator>().Play("Walking");
-        this.gameObject.GetComponent<NavMeshAgent>().speed = 2.5f;
+        anim.Play("Walking");
+        theAgent.speed = 2.5f;
+    }
+
+    // Call this when NPC is shot
+    public void Die()
+    {
+        if (!isAlive) return;
+
+        isAlive = false;
+        StopAllCoroutines();
+        theAgent.isStopped = true;
+        anim.enabled = false; // Disable animator
+
+        EnableRagdoll(); // Turn on ragdoll physics
+    }
+
+    private void EnableRagdoll()
+    {
+        foreach (Rigidbody rb in ragdollBodies)
+        {
+            rb.isKinematic = false; // Physics takes over
+        }
+
+        foreach (Collider col in ragdollColliders)
+        {
+            col.enabled = true;
+        }
+    }
+
+    private void DisableRagdoll()
+    {
+        foreach (Rigidbody rb in ragdollBodies)
+        {
+            rb.isKinematic = true; // Animator controls movement
+        }
+
+        foreach (Collider col in ragdollColliders)
+        {
+            col.enabled = false;
+        }
     }
 }

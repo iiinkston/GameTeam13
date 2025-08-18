@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,15 +10,22 @@ public class NPCDeath : MonoBehaviour
     public GameObject interactionTrigger;
     public GameObject helpMe;
 
-    void HurtNPC(int shotDamage)
+    [Header("Ragdoll")]
+    public Rigidbody[] ragdollBodies;
+    public Collider[] ragdollColliders;
+
+    void Start()
     {
-        npcHealth -= shotDamage;
+        DisableRagdoll();
     }
 
-    void Update()
+    // Call this when NPC is hit
+    public void HurtNPC(int shotDamage)
     {
-        this.gameObject.transform.position = npcObject.transform.position;
-        if (npcHealth <= 0 && npcDead == false)
+        if (npcDead) return;
+
+        npcHealth -= shotDamage;
+        if (npcHealth <= 0)
         {
             npcDead = true;
             StartCoroutine(EndNPC());
@@ -30,15 +36,38 @@ public class NPCDeath : MonoBehaviour
     {
         GlobalWanted.wantedLevel += 1;
         GlobalWanted.activateStar = true;
+
+        // Disable movement and interaction
         npcObject.GetComponent<NPCAI>().enabled = false;
         npcObject.GetComponent<NavMeshAgent>().enabled = false;
-        npcObject.GetComponent<BoxCollider>().enabled = false;
-        this.gameObject.GetComponent<BoxCollider>().enabled = false;
+        npcObject.GetComponent<Collider>().enabled = false;
         interactionTrigger.SetActive(false);
-        yield return new WaitForSeconds(0.1f);
-        npcObject.GetComponent<Animator>().Play("Dying");
         helpMe.SetActive(false);
-        yield return new WaitForSeconds(3);
-        npcObject.GetComponent<Animator>().enabled = false;
+
+        // Enable ragdoll for realistic death
+        EnableRagdoll();
+
+        yield return null; // optional delay if needed
+    }
+
+    private void EnableRagdoll()
+    {
+        Animator anim = npcObject.GetComponent<Animator>();
+        if (anim != null) anim.enabled = false;
+
+        foreach (Rigidbody rb in ragdollBodies)
+            rb.isKinematic = false;
+
+        foreach (Collider col in ragdollColliders)
+            col.enabled = true;
+    }
+
+    private void DisableRagdoll()
+    {
+        foreach (Rigidbody rb in ragdollBodies)
+            rb.isKinematic = true;
+
+        foreach (Collider col in ragdollColliders)
+            col.enabled = false;
     }
 }
