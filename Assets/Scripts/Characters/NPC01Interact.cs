@@ -25,3 +25,5 @@ public class NPC01Interact : MonoBehaviour
         this.gameObject.GetComponent<BoxCollider>().enabled = true;
     }
 }
+
+//test
