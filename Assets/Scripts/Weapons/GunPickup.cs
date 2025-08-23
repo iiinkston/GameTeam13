@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GunPickup : MonoBehaviour {
+// Enables the pistol when picked up and plays sound
+public class GunPickup : MonoBehaviour
+{
 
-    public GameObject ourPistol;
-    public AudioSource gunPickup;
-    public GameObject pistolFireObj;
+    public GameObject ourPistol;// The pistol model to show
+    public AudioSource gunPickup;// Sound to play when picked up
+    public GameObject pistolFireObj;// Firing system or UI linked to the pistol
+
 
     void OnTriggerEnter(Collider other)
     {
