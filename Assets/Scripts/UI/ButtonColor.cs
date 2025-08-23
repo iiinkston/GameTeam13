@@ -4,18 +4,20 @@ using UnityEngine;
 
 public class ButtonColor : MonoBehaviour
 {
+    // Reference to the UI text (or GameObject) that indicates light status
     public GameObject lightText;
 
+    // Called when the mouse enters the button area
+    // Hides (deactivates) the lightText object
     public void TurnOff()
     {
-        //mouse enters button area
         lightText.SetActive(false);
     }
 
+    // Called when the mouse leaves the button area
+    // Shows (activates) the lightText object
     public void TurnOn()
     {
-        //mouse leaves button area
         lightText.SetActive(true);
     }
-
 }
