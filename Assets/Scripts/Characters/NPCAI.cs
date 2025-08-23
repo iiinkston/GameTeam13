@@ -44,7 +44,9 @@ public class NPCAI : MonoBehaviour
             }
         }
     }
-
+    
+    //Behaviour for NPC when it is fleeing and not dead
+    //Determined in NPCAlerted.cs
     IEnumerator FleeingNPC()
     {
         helpMeFX.Play();
