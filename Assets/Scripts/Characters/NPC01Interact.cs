@@ -8,6 +8,7 @@ public class NPC01Interact : MonoBehaviour
     public AudioSource[] voiceLine;
     public int lineNumber;
 
+    //Plays voiceover line for NPC01 when player gets close enough
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
