@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityStandardAssets.Vehicles.Car;
 using UnityEngine.UI;
 
+// Handles player entering a vehicle
 public class VehicleEntry : MonoBehaviour
 {
     public GameObject vehicleCam;
@@ -22,13 +23,17 @@ public class VehicleEntry : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
+                // Disable entry trigger
                 this.gameObject.GetComponent<BoxCollider>().enabled = false;
+                // Switch to vehicle camera and hide player
                 vehicleCam.SetActive(true);
                 thePlayer.SetActive(false);
                 playerPoint.SetActive(true);
+                // Enable vehicle controls
                 liveVehicle.GetComponent<CarController>().enabled = true;
                 liveVehicle.GetComponent<CarUserControl>().enabled = true;
                 liveVehicle.GetComponent<CarAudio>().enabled = true;
+                // Setup minimap and UI
                 canEnter = false;
                 thePlayer.transform.parent = this.gameObject.transform;
                 miniMapCam.transform.parent = liveVehicle.transform;
@@ -36,6 +41,7 @@ public class VehicleEntry : MonoBehaviour
                 miniMapCam.transform.localPosition = new Vector3(0, 25, 0);
                 interactText.GetComponent<Text>().text = "";
                 interactUI.SetActive(false);
+                // Trigger hints and trophy
                 GlobalHints.hintNumber = 2;
                 TrophyManager.trophyUnlocker02 = 1;
                 StartCoroutine(ExitTrigger());
